@@ -10,7 +10,7 @@ import "firebase/firestore";
 import * as firebaseui from 'firebaseui';
 
 // Document elements
-const startRsvpButton = document.getElementById('starSRVP');
+const startRsvpButton = document.getElementById('startSRVP');
 const guestbookContainer = document.getElementById('guestbook-container');
 
 const form = document.getElementById('leave-message');
@@ -25,16 +25,16 @@ var guestbookListener = null;
 
 // Add Firebase project configuration object here
 const firebaseConfig = {
-    apiKey: "AIzaSyD5E1gd4BcYMRPl-jY0kMraVuaD0Zu_9P0",
-    authDomain: "fir-web-codelab-5f6a4.firebaseapp.com",
-    databaseURL: "https://fir-web-codelab-5f6a4.firebaseio.com",
-    projectId: "fir-web-codelab-5f6a4",
-    storageBucket: "fir-web-codelab-5f6a4.appspot.com",
-    messagingSenderId: "520055069392",
-    appId: "1:520055069392:web:eb82c6429c58aaa2b75cd5"
-  };
+  apiKey: "AIzaSyD5E1gd4BcYMRPl-jY0kMraVuaD0Zu_9P0",
+  authDomain: "fir-web-codelab-5f6a4.firebaseapp.com",
+  databaseURL: "https://fir-web-codelab-5f6a4.firebaseio.com",
+  projectId: "fir-web-codelab-5f6a4",
+  storageBucket: "fir-web-codelab-5f6a4.appspot.com",
+  messagingSenderId: "520055069392",
+  appId: "1:520055069392:web:eb82c6429c58aaa2b75cd5"
+};
 
- firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 // FirebaseUI config
 const uiConfig = {
@@ -52,35 +52,38 @@ const uiConfig = {
   }
 };
 
- const ui = new firebaseui.auth.AuthUI(firebase.auth());
+const ui = new firebaseui.auth.AuthUI(firebase.auth());
 
-startRsvpButton.addEventListener("click", ()=> {
-if (firebase.auth().currentUser) {
-firebase.auth().signOut();
-} else {
-ui.start("#firebaseui-auth-container", uiConfig);
-}
+startRsvpButton.addEventListener("click", ()=>{ 
+  if (firebase.auth().currentUser) {
+    firebase.auth().signOut();
+  }else{
+    ui.start("#firebaseui-auth-container", uiConfig);
+  }
 });
 
 firebase.auth().onAuthStateChanged((user)=> {
-if (user) {
-startRsvpButton.textContent = "LOGOUT";
-} else {
-startRsvpButton.textContent = "RSVP";
-}
-});
+  if(user){
+    startRsvpButton.textContent= "LOGOUT";
+    guestbookContainer.style.display = "block";
+  }else{
+    startRsvpButton.textContent ="RSVP";
+    guestbookContainer.style.display = "none";
+  }
+})
 
-form.addEventListener("sumit",(e)=>{
+form.addEventListener("submit", (e)=>{
   e.preventDefault();
 
   firebase.firestore().collection("guestbook").add({
-   text: input.value,
-   timestamp: Date.now(),
-   name: firebase.auth().currentUser.displayName,
-   userId: firebase.auth().currentUser.uid
- })
+    text : input.value,
+    timestamp: Date.now(),
+    name: firebase.auth().currentUser.displayName,
+    userId: firebase.auth().currentUser.uid
+  });
 
- input.value = ""; 
- 
- return false;
+  input.value = "";
+  return false;
 });
+
+
